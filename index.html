@@ -11,61 +11,70 @@
   <title>Chatiw</title>
 
   <style>
-    body{
+    body {
       background-image: url("https://image.freepik.com/free-photo/bokeh-light-background_1048-9616.jpg");
-      background-repeat:no-repeat;
-      background-size:cover;
+      background-repeat: no-repeat;
+      background-size: cover;
       height: 100%;
     }
-     .card {
-            background-color: #C3E4FD;
-        }
-    </style>
-    <script src="../../socket.io/socket.io.js"></script>
-    <!-- <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script> -->
-   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
+    .card {
+      background-color: #C3E4FD;
+    }
+  </style>
+  <script src="../../socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 </head>
 
 <body>
   <br><br><br><br><br><br><br><br><br><br>
+  
   <div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="form createForm">
         <div class="card container">
           <br>
           <h2 class="ui center aligned icon header">
             <i class="circular users icon"></i>
-          Let's Chat
+            Online Users
           </h2>
-          <div class="ui fluid form">
-              <div class="field" placeholder="Subject">
-                  <div class="ui divider"></div>
-                  <div class="field" placeholder="Last Name">
-
-                    
-                      <ul id="messages"></ul>
-                      <form action="/" method="POST" id="chatForm">
-                          <br>
-                        <input id="m" autocomplete="off"  required autofocus="on" oninput="isTyping()" placeholder="type your message here..."/>
-                        <br><br>
-                        <center>
-                        <button class="ui green button">S E N D</button>
-                        </center>
-                      </form>
-                  </div>
-              </div>
-        
+          <ul id="userList"></ul>
         </div>
       </div>
-      <br>
     </div>
+    <div class="col-md-6">
+      <div class="form createForm">
+        <div class="card container">
+          <br>
+          <h2 class="ui center aligned icon header">
+            <i class="circular users icon"></i>
+           W E Chat
+          </h2>
+          <div class="ui fluid form">
+            <div class="field" placeholder="Subject">
+              <div class="ui divider"></div>
+              <div class="field" placeholder="Last Name">
+
+
+                <ul id="messages"></ul>
+                <form action="/" method="POST" id="chatForm">
+                  <br>
+                  <input id="m" autocomplete="off" autofocus="on" oninput="isTyping()" placeholder="type your message here..." />
+                  <br><br>
+                  <center>
+                    <button class="ui green button">S E N D</button>
+                  </center>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <br>
+      </div>
+    </div>
+    <div class="col-md-3"></div>
   </div>
-  <div class="col-md-4"></div>
-  </div>
-  
- 
-  
   <script>
     $(function () {
       var socket = io();
@@ -76,19 +85,30 @@
         return false;
       });
       socket.on('chat message', function (msg) {
+
         $('#messages').append($('<li>').html(msg));
-         window.scrollTo(0, document.body.scrollHeight);
+        window.scrollTo(0, document.body.scrollHeight);
       });
       socket.on('is_online', function (username) {
-      $('#messages').append($('<li>').html(username));
+
+        $('#messages').append($('<li>').html(username));
+      });
+      socket.on('connect', function () {
+        socket.emit('username', prompt("Please enter your username:"));
+
+      });
+
+      socket.on('userList', function (username) {
+				var html = '';
+				for (i = 0; i < username.length; i++) {
+					html += '<li class="userItem">' + username[i] + '</li>';
+					
+				}
+        $("#userList").html(html);
+      });   
+
     });
-    socket.on('connect', function(){
-        socket.emit('username', prompt("What's your name?"));
-        
-    });
-    
-    });
-   
+
   </script>
 
 </body>
